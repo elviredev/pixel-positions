@@ -46,7 +46,7 @@ class JobController extends Controller
  {
     // valider les données
     $attributes = $request->validate([
-       'title' => ['required'],
+       'title' => ['required', 'min:3'],
        'salary' => ['required'],
        'location' => ['required'],
        'schedule' => ['required', Rule::in( ['Part Time', 'Full Time'])],
@@ -98,7 +98,7 @@ class JobController extends Controller
  public function update(Request $request, Job $job)
  {
     $attributes = $request->validate([
-     'title' => ['required'],
+     'title' => ['required', 'min:3'],
      'salary' => ['required'],
      'location' => ['required'],
      'schedule' => ['required', Rule::in( ['Part Time', 'Full Time'])],
@@ -138,10 +138,21 @@ class JobController extends Controller
  }
 
  /**
-  * Remove the specified resource from storage.
+  * @desc Remove the specified resource from storage.
+  * @route DELETE /jobs/{$job}
   */
  public function destroy(Job $job)
  {
-     //
+    // Détacher les relations (tags)
+    $job->tags()->detach();
+
+    // Supprimer le job
+    $job->delete();
+
+    // Supprimer les tags orphelins
+    Tag::doesntHave('jobs')->delete();
+
+     return redirect('/')
+        ->with('success', 'Job deleted successfully!');
  }
 }

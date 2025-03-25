@@ -25,7 +25,11 @@ Route::patch('/jobs/{job}', [JobController::class, 'update'])
    ->middleware('auth')
    ->can('edit', 'job');
 
+Route::delete('/jobs/{job}', [JobController::class, 'destroy'])
+   ->middleware('auth')
+   ->can('edit', 'job');
 
+// Search
 Route::get('/search', SearchController::class);
 Route::get('/tags/{tag:name}', TagController::class);
 
